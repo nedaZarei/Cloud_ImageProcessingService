@@ -1,0 +1,26 @@
+server:
+  port: :8080
+
+postgres:
+  host: "f3bfc789-a0b6-43fb-8055-40597e78d30f.hsvc.ir"
+  port: 30379
+  username: "postgres"
+  password: "scZLhBkGXxgDzPa59uWJV06mMxP7NDMk"
+  database: "register_service"
+  auto_create: true
+
+rabbitmq:
+  host: "310ff693-06f8-4aa1-89f8-a08040236925.hsvc.ir"
+  port: 31309
+  username: "rabbitmq"
+  password: "rYzDvLxVtEgoR550vkZuI9mNLF5AhWMr"
+
+minio:
+  endpoint: "my-minio.darkube.app"
+  access_key: "kh34Wqbdz8OY8SNMjuz9"
+  secret_key: "39CDsX9W7bZy0BzvOb8J99xMFL5KVThOFIdyXpoi"
+  bucket: "moz1"
+
+huggingface:
+  api_key: "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"
+  url: "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large"

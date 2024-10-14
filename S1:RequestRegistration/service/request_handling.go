@@ -60,34 +60,21 @@ func (s *Service) StartService() error {
 		return fmt.Errorf("failed to open a channel: %v", err)
 	}
 
-	//rabbitMQ queue
-	_, err = s.rabbitMQClient.QueueDeclare(
-		"image_queue",
-		true,  //durable
-		false, //delete when unused
-		false, //exclusive
-		false, //no-wait
-		nil,   //arguments
-	)
-	if err != nil {
-		return fmt.Errorf("failed to declare RabbitMQ queue: %v", err)
-	}
-
 	//minio init
 	s.minioClient, err = minio.New(s.cfg.Minio.Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(s.cfg.Minio.AccessKey, s.cfg.Minio.SecretKey, ""),
 		Secure: true,
 	})
 	if err != nil {
-		return fmt.Errorf("failed to initialize MinIO client: %v", err)
+		return fmt.Errorf("failed to initialize Minio client: %v", err)
 	}
-	log.Println("connected to MinIO")
+	log.Println("connected to Minio")
 
 	//setting up echo server with middleware
 	s.e.Use(middleware.Logger())
 	s.e.Use(middleware.Recover())
 
-	//api routes
+	//api routes (for backward compatability)
 	v1 := s.e.Group("/api/v1")
 	v1.POST("/register", s.RegisterRequest)
 	v1.GET("/request/:id", s.GetRequestStatus)
@@ -128,7 +115,7 @@ func (s *Service) RegisterRequest(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 
-	//uploading image to MinIO
+	//uploading image to Minio
 	_, err = s.minioClient.PutObject(c.Request().Context(), s.cfg.Minio.Bucket, strconv.Itoa(id), bytes.NewReader(imageData), int64(len(imageData)), minio.PutObjectOptions{ContentType: "image/jpeg"})
 	if err != nil {
 		fmt.Println(err)
