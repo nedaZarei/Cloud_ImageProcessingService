@@ -1,0 +1,22 @@
+server:
+  port: :8080
+
+postgres:
+  host: "16f9082e-354c-42f9-a069-fd55c34fc8c1.hsvc.ir"
+  port: 32401
+  username: "postgres"
+  password: "OejeLvYz4tCiTgQJ0u5tFxmztKxuDGaD"
+  database: "request_service"
+  autocreate: true
+
+rabbitmq:
+  host: "310ff693-06f8-4aa1-89f8-a08040236925.hsvc.ir"
+  port: 32389
+  username: "rabbitmq"
+  password: "Mg0i0wDn4MjiN9Y9BLSdueUjBacljV6G"
+
+minio:
+  endpoint: "my-minio.darkube.app"
+  accesskey: "FMZUSsvTowhC0yAmLWgF"
+  secretkey: "IUbj0P1ZcK00LfmhsGvYc4MaiONiiu2WLoi8drU0"
+  bucket: "request1"
