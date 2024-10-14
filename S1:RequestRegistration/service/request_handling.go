@@ -26,6 +26,7 @@ type Service struct {
 	e               *echo.Echo
 	RequestDatabase db.RequestDatabase
 	rabbitMQClient  *amqp.Channel
+	queue           amqp.Queue
 	minioClient     *minio.Client
 }
 
@@ -59,7 +60,10 @@ func (s *Service) StartService() error {
 	if err != nil {
 		return fmt.Errorf("failed to open a channel: %v", err)
 	}
-
+	s.queue, err = s.rabbitMQClient.QueueDeclare("image_queue", true, false, false, false, nil)
+	if err != nil {
+		return fmt.Errorf("failed to declare a queue: %v", err)
+	}
 	//minio init
 	s.minioClient, err = minio.New(s.cfg.Minio.Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(s.cfg.Minio.AccessKey, s.cfg.Minio.SecretKey, ""),
@@ -122,7 +126,7 @@ func (s *Service) RegisterRequest(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, err)
 	}
 
-	return c.JSON(http.StatusCreated, request)
+	return c.JSON(http.StatusCreated, "you can check the status of your request with this id: "+strconv.Itoa(id))
 }
 func extractImageFromRequest(c echo.Context) ([]byte, error) {
 	c.Request().ParseMultipartForm(10 << 20) //max 10MB file size

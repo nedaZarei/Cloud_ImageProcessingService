@@ -3,10 +3,12 @@ package config
 import "github.com/spf13/viper"
 
 type Config struct {
-	Server   Server   `yaml:"server"`
-	Postgres Postgres `yaml:"postgres"`
-	RabbitMQ RabbitMQ `yaml:"rabbitmq"`
-	Minio    Minio    `yaml:"minio"`
+	Server      Server      `yaml:"server"`
+	Postgres    Postgres    `yaml:"postgres"`
+	RabbitMQ    RabbitMQ    `yaml:"rabbitmq"`
+	Minio       Minio       `yaml:"minio"`
+	HuggingFace HuggingFace `yaml:"huggingface"`
+	Email       Email       `yaml:"email"`
 }
 
 type Server struct {
@@ -40,6 +42,11 @@ type Minio struct {
 type HuggingFace struct {
 	APIKey string
 	URL    string
+}
+
+type Email struct {
+	APIKey string
+	From   string
 }
 
 func InitConfig(filename string) (*Config, error) {

@@ -39,8 +39,8 @@ type Minio struct {
 }
 
 type HuggingFace struct {
-	APIKey string
-	URL    string
+	APIKey string `yaml:"apikey"`
+	URL    string `yaml:"url"`
 }
 
 func InitConfig(filename string) (*Config, error) {

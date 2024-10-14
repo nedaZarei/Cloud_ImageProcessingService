@@ -1,26 +1,27 @@
-server:
-  port: :8080
-
 postgres:
-  host: "f3bfc789-a0b6-43fb-8055-40597e78d30f.hsvc.ir"
-  port: 30379
+  host: "b7dea484-e154-4352-99fe-147b0c320e9e.hsvc.ir"
+  port: 30610
   username: "postgres"
-  password: "scZLhBkGXxgDzPa59uWJV06mMxP7NDMk"
-  database: "register_service"
-  auto_create: true
+  password: "1fBoSf1G3OMw6TId4X7lwNOdvVI7lWEy"
+  database: "request_service"
+  autocreate: true
 
 rabbitmq:
-  host: "310ff693-06f8-4aa1-89f8-a08040236925.hsvc.ir:32389"
-  port: 31309
+  host: "6d6af152-154d-4e83-ac9e-b3e4a9df1888.hsvc.ir"
+  port: 32457
   username: "rabbitmq"
-  password: "rYzDvLxVtEgoR550vkZuI9mNLF5AhWMr"
+  password: "geOvdPR7GkwU4XbjlSAuFnsOc7fpnhjm"
 
 minio:
   endpoint: "my-minio.darkube.app"
-  access_key: "kh34Wqbdz8OY8SNMjuz9"
-  secret_key: "39CDsX9W7bZy0BzvOb8J99xMFL5KVThOFIdyXpoi"
-  bucket: "moz1"
+  accesskey: "FMZUSsvTowhC0yAmLWgF"
+  secretkey: "IUbj0P1ZcK00LfmhsGvYc4MaiONiiu2WLoi8drU0"
+  bucket: "request2"
 
 huggingface:
-  api_key: "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"
-  url: "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large"
+  apikey: "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"
+  url: "https://api-inference.huggingface.co/models/ZB-Tech/Text-to-Image"
+
+email:
+  apikey: "mlsn.270bbb37ad9a7bd723e9a3eef644b9c091fb230d77b6164d4a892c9b01a3cdfc"
+  from: "info@trial-ynrw7gy20nk42k8e.mlsender.net"
