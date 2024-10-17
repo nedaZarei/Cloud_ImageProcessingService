@@ -6,12 +6,6 @@ postgres:
   database: "request_service"
   autocreate: true
 
-rabbitmq:
-  host: "6d6af152-154d-4e83-ac9e-b3e4a9df1888.hsvc.ir"
-  port: 32457
-  username: "rabbitmq"
-  password: "geOvdPR7GkwU4XbjlSAuFnsOc7fpnhjm"
-
 minio:
   endpoint: "my-minio.darkube.app"
   accesskey: "FMZUSsvTowhC0yAmLWgF"

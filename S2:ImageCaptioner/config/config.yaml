@@ -7,10 +7,10 @@ postgres:
   autocreate: true
 
 rabbitmq:
-  host: "6d6af152-154d-4e83-ac9e-b3e4a9df1888.hsvc.ir"
-  port: 32457
+  host: "3e1490dd-1fe3-47e6-99d1-7b3f48de5baa.hsvc.ir"
+  port: 32451
   username: "rabbitmq"
-  password: "geOvdPR7GkwU4XbjlSAuFnsOc7fpnhjm"
+  password: "x2OB57JDq6DjHIsqM3WaFLAHQRkDGQCW"
 
 minio:
   endpoint: "my-minio.darkube.app"
@@ -20,8 +20,4 @@ minio:
 
 huggingface:
   apikey: "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"
-  url: "https://api-inference.huggingface.co/models/ZB-Tech/Text-to-Image"
-
-email:
-  apikey: "mlsn.270bbb37ad9a7bd723e9a3eef644b9c091fb230d77b6164d4a892c9b01a3cdfc"
-  from: "info@trial-ynrw7gy20nk42k8e.mlsender.net"
+  url: "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large"

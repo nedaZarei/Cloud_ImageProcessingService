@@ -20,7 +20,6 @@ func NewImageRequestDB(db *sqlx.DB) *ImageRequestDBImpl {
 	return &ImageRequestDBImpl{db: db}
 }
 
-// updates the request status to ready and adds the caption
 func (repo *ImageRequestDBImpl) SetRequestReady(ctx context.Context, requestID int, caption string) error {
 	_, err := repo.db.Exec("UPDATE requests SET status=$1, image_caption=$2 WHERE id=$3", models.TaskReady, caption, requestID)
 	if err != nil {

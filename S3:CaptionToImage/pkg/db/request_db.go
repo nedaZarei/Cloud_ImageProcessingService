@@ -31,7 +31,7 @@ func (r *RequestDatabaseImpl) UpdateImageURL(ctx context.Context, requestID stri
 		status = string(models.TaskCompleted)
 	}
 
-	_, err := r.DB.ExecContext(ctx, query, imageURL, status, requestID)
+	_, err := r.DB.ExecContext(ctx, query, imageURL, status, requestID) //executes a query without returning any rows
 	if err != nil {
 		fmt.Println("error updating image URL:", err)
 		return err

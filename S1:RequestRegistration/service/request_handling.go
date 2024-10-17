@@ -25,9 +25,9 @@ type Service struct {
 	cfg             *config.Config
 	e               *echo.Echo
 	RequestDatabase db.RequestDatabase
-	rabbitMQClient  *amqp.Channel
-	queue           amqp.Queue
-	minioClient     *minio.Client
+	rabbitMQClient  *amqp.Channel //channel : context for valid message exchange
+	queue           amqp.Queue    //captures the current server state of the queue on the server returned
+	minioClient     *minio.Client //implements Amazon S3 compatible method
 }
 
 func NewService(cfg *config.Config) *Service {
@@ -55,7 +55,7 @@ func (s *Service) StartService() error {
 	if err != nil {
 		return fmt.Errorf("failed to connect to RabbitMQ: %v", err)
 	}
-	log.Println("Connected to RabbitMQ")
+	log.Println("connected to RabbitMQ")
 	s.rabbitMQClient, err = conn.Channel()
 	if err != nil {
 		return fmt.Errorf("failed to open a channel: %v", err)
@@ -95,7 +95,6 @@ func (s *Service) RegisterRequest(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, err)
 	}
-	//for email
 	request := &struct {
 		Email string `json:"email" form:"email"`
 	}{}
@@ -128,6 +127,7 @@ func (s *Service) RegisterRequest(c echo.Context) error {
 
 	return c.JSON(http.StatusCreated, "you can check the status of your request with this id: "+strconv.Itoa(id))
 }
+
 func extractImageFromRequest(c echo.Context) ([]byte, error) {
 	c.Request().ParseMultipartForm(10 << 20) //max 10MB file size
 	form, err := c.MultipartForm()
@@ -163,7 +163,10 @@ func (s *Service) GetRequestStatus(c echo.Context) error {
 
 	if request.Status == models.TaskPending {
 		return c.JSON(http.StatusOK, "req is in process (pending)")
+	} else if request.Status == models.TaskFailed {
+		return c.JSON(http.StatusOK, "req is failed:(")
+	} else if request.Status == models.TaskReady {
+		return c.JSON(http.StatusOK, "req is ready to process (ready)")
 	}
-
 	return c.JSON(http.StatusOK, fmt.Sprintf("READY! now you can download the image from: %s", request.NewImageURL))
 }

@@ -57,10 +57,11 @@ func (s *Service) StartService() error {
 }
 
 func (s *Service) StartScheduledImageProcessing() {
-	ticker := time.NewTicker(5 * time.Second) //creating a ticker that triggers every 5 sec
+	//creating a ticker that triggers every 5 sec starting a goroutine that runs ImageProcessingJob
+	ticker := time.NewTicker(5 * time.Second)
 	defer ticker.Stop()
 
-	//creating a channel to signal when to stop the goroutine
+	//when sth writes to this channel it will stop the loop
 	quit := make(chan struct{})
 
 	for {
@@ -82,7 +83,7 @@ func (s *Service) ImageProcessingJob() {
 	}
 
 	for _, req := range requests {
-		//sending the caption to HuggingFace API and get the image
+		//sending the caption to HuggingFace API and getting the image
 		imageBytes, err := s.generateImageFromCaption(req.ImageCaption)
 		if err != nil || len(imageBytes) == 0 {
 			log.Printf("failed to generate image for request %d: %v", req.ID, err)
@@ -144,7 +145,6 @@ func (s *Service) generateImageFromCaption(caption string) ([]byte, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		//print body
 		body, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, fmt.Errorf("failed to read Hugging Face response: %w", err)
@@ -197,12 +197,11 @@ func (s *Service) sendEmail(subject, text, html, fromName, fromEmail, toEmail st
 }
 
 func (s *Service) uploadImageToMinIO(ctx context.Context, id int, imageBytes []byte) (string, error) {
-	// Upload the image to MinIO
-	_, err := s.minioClient.PutObject(ctx, s.cfg.Minio.Bucket, strconv.Itoa(id)+" : "+time.Now().Format("2006-01-02 15:04:05"), bytes.NewReader(imageBytes), int64(len(imageBytes)), minio.PutObjectOptions{ContentType: "image/png"})
+	_, err := s.minioClient.PutObject(ctx, s.cfg.Minio.Bucket, strconv.Itoa(id)+time.Now().Format("2006-01-02"), bytes.NewReader(imageBytes), int64(len(imageBytes)), minio.PutObjectOptions{ContentType: "image/png"})
 	if err != nil {
 		return "", fmt.Errorf("failed to upload image to Minio: %w", err)
 	}
-	// Generate the image URL
-	imageURL := fmt.Sprintf("https://%s/%s/%s", s.cfg.Minio.Endpoint, s.cfg.Minio.Bucket, strconv.Itoa(id)+" : "+time.Now().Format("2006-01-02 15:04:05"))
+	//generating the image URL
+	imageURL := fmt.Sprintf("https://%s/%s/%s", s.cfg.Minio.Endpoint, s.cfg.Minio.Bucket, strconv.Itoa(id)+time.Now().Format("2006-01-02"))
 	return imageURL, nil
 }

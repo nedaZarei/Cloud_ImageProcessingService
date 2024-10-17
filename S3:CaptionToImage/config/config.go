@@ -5,7 +5,6 @@ import "github.com/spf13/viper"
 type Config struct {
 	Server      Server      `yaml:"server"`
 	Postgres    Postgres    `yaml:"postgres"`
-	RabbitMQ    RabbitMQ    `yaml:"rabbitmq"`
 	Minio       Minio       `yaml:"minio"`
 	HuggingFace HuggingFace `yaml:"huggingface"`
 	Email       Email       `yaml:"email"`
@@ -22,14 +21,6 @@ type Postgres struct {
 	Password        string `yaml:"password"`
 	Database        string `yaml:"database"`
 	AutoCreateTable bool   `yaml:"auto_create"`
-}
-
-type RabbitMQ struct {
-	Host     string `yaml:"host"`
-	Port     int    `yaml:"port"`
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
-	Topic    string `yaml:"topic"`
 }
 
 type Minio struct {

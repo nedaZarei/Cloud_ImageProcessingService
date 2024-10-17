@@ -75,7 +75,8 @@ func (s *Service) StartService() error {
 }
 
 func (s *Service) consumeImageRequests() {
-	msgs, err := s.rabbitMQClient.Consume(
+
+	msgs, err := s.rabbitMQClient.Consume( //msgs : channel
 		"image_queue", // queue
 		"",            // consumer
 		false,         // auto-ack
@@ -87,7 +88,7 @@ func (s *Service) consumeImageRequests() {
 	if err != nil {
 		log.Fatalf("failed to register a consumer: %v", err)
 	}
-
+	fmt.Println(len(msgs))
 	for d := range msgs {
 		log.Printf("received a message: %s", d.MessageId)
 		id, err := strconv.Atoi(d.MessageId)
@@ -111,7 +112,7 @@ func (s *Service) consumeImageRequests() {
 
 func (s *Service) processImage(imageID int) (string, error) {
 
-	//retrievign the image from Minio
+	//getting the image from Minio
 	imageData, err := s.minioClient.GetObject(context.Background(), s.cfg.Minio.Bucket, strconv.Itoa(imageID), minio.GetObjectOptions{})
 	if err != nil {
 		return "", err
@@ -119,23 +120,17 @@ func (s *Service) processImage(imageID int) (string, error) {
 	}
 	defer imageData.Close()
 
-	// converting image to byte array
+	//converting image to byte array
 	imageBytes := new(bytes.Buffer)
 	if _, err := io.Copy(imageBytes, imageData); err != nil {
 		log.Printf("Failed to read image data: %v", err)
 		return "", err
 	}
 
-	//equesting a caption from Hugging Face API
+	//requesting a caption from Hugging Face API
 	caption, err := s.getCaption(imageBytes.Bytes())
 	if err != nil {
 		log.Printf("Failed to generate caption: %v", err)
-		return "", err
-	}
-
-	err = s.RequestDatabase.SetRequestReady(context.Background(), imageID, caption)
-	if err != nil {
-		log.Printf("failed to update request status: %v", err)
 		return "", err
 	}
 
@@ -143,17 +138,15 @@ func (s *Service) processImage(imageID int) (string, error) {
 }
 
 func (s *Service) getCaption(imageData []byte) (string, error) {
-	// Create a new POST request to the HuggingFace API with the image data
+	//creating a new POST request to the HuggingFace API with the image data
 	req, err := http.NewRequest("POST", s.cfg.HuggingFace.URL, bytes.NewBuffer(imageData))
 	if err != nil {
 		return "", fmt.Errorf("failed to create request: %w", err)
 	}
 
-	// Set the authorization header
 	req.Header.Set("Authorization", "Bearer "+s.cfg.HuggingFace.APIKey)
-	req.Header.Set("Content-Type", "application/octet-stream") // Set correct content type
+	req.Header.Set("Content-Type", "application/octet-stream")
 
-	// Create a new HTTP client and send the request
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -161,20 +154,18 @@ func (s *Service) getCaption(imageData []byte) (string, error) {
 	}
 	defer resp.Body.Close()
 
-	// Check if the API responded with a successful status
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("API responded with status: %d", resp.StatusCode)
 	}
 
-	// Parse the response body to extract the caption
 	var captionResponse []struct {
-		GeneratedText string `json:"generated_text"` // Adjusted field for HuggingFace response
+		GeneratedText string `json:"generated_text"` //adjusting field for HuggingFace response
 	}
 	if err := json.NewDecoder(resp.Body).Decode(&captionResponse); err != nil {
 		return "", fmt.Errorf("failed to parse API response: %w", err)
 	}
 
-	// Ensure there's a generated caption in the response
+	//ensuring there is a generated caption in the response
 	if len(captionResponse) > 0 && len(captionResponse[0].GeneratedText) > 0 {
 		return captionResponse[0].GeneratedText, nil
 	}

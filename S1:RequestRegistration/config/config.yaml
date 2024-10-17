@@ -10,10 +10,10 @@ postgres:
   autocreate: true
 
 rabbitmq:
-  host: "6d6af152-154d-4e83-ac9e-b3e4a9df1888.hsvc.ir"
-  port: 32457
+  host: "3e1490dd-1fe3-47e6-99d1-7b3f48de5baa.hsvc.ir"
+  port: 32451
   username: "rabbitmq"
-  password: "geOvdPR7GkwU4XbjlSAuFnsOc7fpnhjm"
+  password: "x2OB57JDq6DjHIsqM3WaFLAHQRkDGQCW"
 
 minio:
   endpoint: "my-minio.darkube.app"
